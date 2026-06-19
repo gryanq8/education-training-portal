@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة تشغيل الإدارات | البوابة الرقمية</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>لوحة تشغيل الإدارات</h1>
+      <p>إدارة المحتوى والخدمات حسب الصلاحيات</p>
+    </div>
+    <button id="logoutBtn" class="btn danger">تسجيل الخروج</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel profile-panel">
+      <h2>بيانات المستخدم</h2>
+      <div id="profileBox" class="profile-box">جاري تحميل البيانات...</div>
+    </section>
+
+    <section class="panel">
+      <h2>إضافة محتوى موحد</h2>
+      <form id="contentForm" class="grid-form">
+        <div>
+          <label>العنوان</label>
+          <input id="title" required />
+        </div>
+
+        <div>
+          <label>نوع المحتوى</label>
+          <select id="contentType" required>
+            <option value="course">دورة / برنامج تدريبي</option>
+            <option value="training_bag">حقيبة تدريبية</option>
+            <option value="library_item">مصدر مكتبة رقمية</option>
+            <option value="research_item">بحث / دراسة</option>
+            <option value="journal_article">مقال مجلة</option>
+            <option value="announcement">إعلان / تعميم</option>
+          </select>
+        </div>
+
+        <div>
+          <label>الإدارة</label>
+          <select id="departmentId" required></select>
+        </div>
+
+        <div>
+          <label>حالة النشر</label>
+          <select id="status">
+            <option value="draft">مسودة</option>
+            <option value="under_review">قيد المراجعة</option>
+            <option value="approved">معتمد</option>
+            <option value="published">منشور</option>
+            <option value="archived">مؤرشف</option>
+          </select>
+        </div>
+
+        <div>
+          <label>مستوى الإتاحة</label>
+          <select id="visibility">
+            <option value="internal">داخلي</option>
+            <option value="public">عام</option>
+            <option value="restricted">مقيد</option>
+          </select>
+        </div>
+
+        <div>
+          <label>كلمات مفتاحية</label>
+          <input id="keywords" placeholder="تدريب، مرور، قيادة" />
+        </div>
+
+        <div class="wide">
+          <label>ملخص</label>
+          <textarea id="summary" rows="2"></textarea>
+        </div>
+
+        <div class="wide">
+          <label>الوصف</label>
+          <textarea id="description" rows="3"></textarea>
+        </div>
+
+        <button class="btn primary" type="submit">حفظ المحتوى</button>
+      </form>
+
+      <div id="formMessage" class="message"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <h2>المحتوى المسجل</h2>
+        <div class="filters">
+          <input id="searchInput" placeholder="بحث..." />
+          <select id="filterType">
+            <option value="">كل الأنواع</option>
+            <option value="course">دورات</option>
+            <option value="training_bag">حقائب</option>
+            <option value="library_item">مكتبة</option>
+            <option value="research_item">بحوث</option>
+            <option value="journal_article">مجلة</option>
+            <option value="announcement">إعلانات</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>العنوان</th>
+              <th>النوع</th>
+              <th>الإدارة</th>
+              <th>الحالة</th>
+              <th>الإتاحة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="contentTable">
+            <tr><td colspan="6">جاري تحميل المحتوى...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
