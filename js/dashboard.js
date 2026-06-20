@@ -13,12 +13,15 @@ const departmentSelect = document.getElementById("departmentId");
 const contentTable = document.getElementById("contentTable");
 const searchInput = document.getElementById("searchInput");
 const filterType = document.getElementById("filterType");
+const contentTypeSelect = document.getElementById("contentType");
+const courseFields = document.getElementById("courseFields");
 
 document.addEventListener("DOMContentLoaded", initDashboard);
 logoutBtn.addEventListener("click", logout);
 contentForm.addEventListener("submit", saveContent);
 searchInput.addEventListener("input", renderContentTable);
 filterType.addEventListener("change", renderContentTable);
+contentTypeSelect.addEventListener("change", toggleSpecializedFields);
 
 async function initDashboard() {
   const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -29,6 +32,7 @@ async function initDashboard() {
   }
 
   currentUser = sessionData.session.user;
+  toggleSpecializedFields();
 
   await loadProfile();
   await loadDepartments();
@@ -46,7 +50,7 @@ async function loadProfile() {
     .single();
 
   if (error) {
-    profileBox.textContent = "تعذر جلب بيانات المستخدم. تأكد من ربط المستخدم في جدول user_profiles.";
+    profileBox.textContent = "تعذر جلب بيانات المستخدم.";
     console.error(error);
     return;
   }
@@ -160,8 +164,10 @@ async function saveContent(event) {
   }
 
   await insertSpecializedRecord(data);
+
   formMessage.textContent = "تم حفظ المحتوى بنجاح.";
   contentForm.reset();
+  toggleSpecializedFields();
   await loadContent();
 }
 
@@ -169,12 +175,64 @@ async function insertSpecializedRecord(contentItem) {
   const type = contentItem.content_type;
 
   const map = {
-    course: { table: "courses", payload: { content_item_id: contentItem.id, course_name: contentItem.title } },
-    training_bag: { table: "training_bags", payload: { content_item_id: contentItem.id, bag_name: contentItem.title } },
-    library_item: { table: "library_items", payload: { content_item_id: contentItem.id, title: contentItem.title } },
-    research_item: { table: "research_items", payload: { content_item_id: contentItem.id, title: contentItem.title } },
-    journal_article: { table: "journal_articles", payload: { content_item_id: contentItem.id, article_title: contentItem.title } },
-    announcement: { table: "announcements", payload: { content_item_id: contentItem.id, announcement_title: contentItem.title } }
+    course: {
+      table: "courses",
+      payload: {
+        content_item_id: contentItem.id,
+        course_name: contentItem.title,
+        course_number: document.getElementById("courseNumber").value.trim(),
+        course_type: document.getElementById("courseType").value.trim(),
+        training_center: document.getElementById("trainingCenter").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        start_date: document.getElementById("startDate").value || null,
+        end_date: document.getElementById("endDate").value || null,
+        duration_days: Number(document.getElementById("durationDays").value) || null,
+        training_hours: Number(document.getElementById("trainingHours").value) || null,
+        target_audience: document.getElementById("targetAudience").value.trim(),
+        requirements: document.getElementById("requirements").value.trim(),
+        instructor_name: document.getElementById("instructorName").value.trim(),
+        instructor_title: document.getElementById("instructorTitle").value.trim(),
+        objectives: document.getElementById("objectives").value.trim(),
+        topics: document.getElementById("topics").value.trim(),
+        capacity: Number(document.getElementById("capacity").value) || null,
+        registration_method: document.getElementById("registrationMethod").value.trim()
+      }
+    },
+    training_bag: {
+      table: "training_bags",
+      payload: {
+        content_item_id: contentItem.id,
+        bag_name: contentItem.title
+      }
+    },
+    library_item: {
+      table: "library_items",
+      payload: {
+        content_item_id: contentItem.id,
+        title: contentItem.title
+      }
+    },
+    research_item: {
+      table: "research_items",
+      payload: {
+        content_item_id: contentItem.id,
+        title: contentItem.title
+      }
+    },
+    journal_article: {
+      table: "journal_articles",
+      payload: {
+        content_item_id: contentItem.id,
+        article_title: contentItem.title
+      }
+    },
+    announcement: {
+      table: "announcements",
+      payload: {
+        content_item_id: contentItem.id,
+        announcement_title: contentItem.title
+      }
+    }
   };
 
   if (!map[type]) return;
@@ -320,6 +378,16 @@ function translateVisibility(value) {
     restricted: "مقيد"
   };
   return map[value] || value;
+}
+
+function toggleSpecializedFields() {
+  const selectedType = contentTypeSelect.value;
+
+  if (selectedType === "course") {
+    courseFields.style.display = "block";
+  } else {
+    courseFields.style.display = "none";
+  }
 }
 
 function escapeHtml(value) {
